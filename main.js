@@ -1,97 +1,94 @@
-
-// model
+// model 
 let todo;
-const savedItem = JSON.parse(localStorage.getItem('todo'));
+const savedItem = JSON.parse(localStorage.getItem('todos'));
 if(Array.isArray(savedItem)) {
     todo = savedItem;
 } else {
     todo = [{
-        title: 'Kumain na',
-        dueDate: '2023-03-24',
+        title: 'Kumain',
+        due: '2023-03-24',
         id: 'id1'
     }, {
-        title: 'Bumangon na',
-        dueDate: '2023-03-24',
+        title: 'Maligo',
+        due: '2023-03-24',
         id: 'id2'
     }, {
         title: 'Matulog',
-        dueDate: '2023-03-24',
+        due: '2023-03-25',
         id: 'id3'
     }];
 }
 
-
-
-render();
-
-// creates a todo
-function createTodo(userInput, dueDate) {
+// create todo
+const createTodo = (userInput, userDate) => {
     const randomId = new Date().getTime();
 
     todo.push({
         title: userInput,
-        dueDate: dueDate,
+        due: userDate,
         id: randomId
     });
+
     save();
 };
-//deletes a todo
-function removeTodo(idToDelete) {
-    todo = todo.filter(function (todoDelete) {
-        // if the id matches idToDelete, return false
-        // return true
-        if (todoDelete.id == idToDelete) {
-           return false;
+
+// Delete
+const deleteTodo = (delBtnId) => {
+    todo = todo.filter(function (todoFilter) {
+        if(todoFilter.id == delBtnId) {
+            return false;
         } else {
-           return true;
+            return true;
         }
-   });
-   save();
+    })
+    save();
 };
 
-// save and retrieve
-const save = () => {
-    localStorage.setItem('todo', JSON.stringify(todo));
-};
-
-// controller
-
+// control
 const clickTodo = () => {
-    const user = document.getElementById('todoTite');
+    const user = document.getElementById('todoInput');
     const userInput = user.value;
 
-    const due = document.getElementById('date');
-    const dueDate = due.value;
+    const date = document.getElementById('date');
+    const userDate = date.value;
+    
+    createTodo(userInput, userDate);
+    render();
+}; 
 
-    createTodo(userInput, dueDate); 
+const deleteFunc = (event) => {
+    const delBtn = event.target; 
+    const delBtnId = delBtn.id;
+
+    
+    deleteTodo(delBtnId);
     render();
 };
 
-function deleteButton(event) {
-    const delBtn = event.target;
-    const idToDelete = delBtn.id;
-
-    removeTodo(idToDelete);
-    render();
+const save = () => {
+   localStorage.setItem('todos', JSON.stringify(todo));
 };
 
 // view
 
-function render() {
-    const reset = document.getElementById('todo-list').innerHTML = '';
+const render = () => {
+    document.getElementById('todo-list').innerHTML = "";
 
     todo.forEach((todoLoop) => {
         const div = document.createElement('div');
-        div.innerText = todoLoop.dueDate + " " + todoLoop.title;
+        div.innerText = todoLoop.due + " " + todoLoop.title;
+        const todoList = document.getElementById('todo-list');
 
         const del = document.createElement('button');
         del.innerText = 'Delete';
         del.id = todoLoop.id;
-        del.onclick = deleteButton;  
+        del.onclick = deleteFunc;
         div.appendChild(del);
 
-
-        const todoList = document.getElementById('todo-list');
         todoList.appendChild(div);
     });
 };
+
+render();
+
+
